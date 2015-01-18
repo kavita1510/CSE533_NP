@@ -1,0 +1,51 @@
+# The Makefile which will make the server and client executables.
+# It is linked to the libunp on Tapti's local machine. Please change to point
+# to required machine. 
+# Also, it links to the threadsafe version of readline from Steven's code.
+
+CC = gcc
+
+LIBS = -lresolv -lnsl -lsocket -lpthread -lm\
+	/home/courses/cse533/Stevens/unpv13e_solaris2.10/libunp.a
+
+FLAGS = -g -O2
+
+CFLAGS = ${FLAGS} -I/home/courses/cse533/Stevens/unpv13e_solaris2.10/lib -DFUP_LOG # Remove the -DFUP_LOG to disable logging.
+
+#all: client server testclient
+all: client server
+
+# server uses the thread-safe version of readline.c
+
+server: udpserver.o readline.o fup.o sliding_window.o get_ifi_info.o prifinfo.o
+	${CC} ${FLAGS} -o server udpserver.o readline.o fup.o sliding_window.o get_ifi_info.o prifinfo.o ${LIBS}
+udpserver.o: udpserver.c
+	${CC} ${CFLAGS} -c udpserver.c
+
+client: udpclient.o fup.o sliding_window.o get_ifi_info.o prifinfo.o
+	${CC} ${FLAGS} -o client udpclient.o fup.o sliding_window.o get_ifi_info.o prifinfo.o ${LIBS}
+udpclient.o: udpclient.c 
+	${CC} ${CFLAGS} -c udpclient.c
+
+fup.o: fup.c
+	${CC} ${CFLAGS} -c fup.c
+
+sliding_window.o: sliding_window.c
+	${CC} ${CFLAGS} -c sliding_window.c
+
+get_ifi_info.o: get_ifi_info.c
+	${CC} ${CFLAGS} -c get_ifi_info.c
+
+prifinfo.o: prifinfo.c 
+	${CC} ${CFLAGS} -c prifinfo.c
+
+# pick up the thread-safe version of readline.c from directory "threads"
+
+readline.o: /home/courses/cse533/Stevens/unpv13e_solaris2.10/threads/readline.c
+	${CC} ${CFLAGS} -c /home/courses/cse533/Stevens/unpv13e_solaris2.10/threads/readline.c
+
+#testclient: testclient.o fup.o 
+#	${CC} ${CFLAGS} -o testclient testclient.c fup.o
+clean:
+	rm server client udpclient.o udpserver.o fup.o testclient testclient.o readline.o prifinfo.o get_ifi_info.o
+

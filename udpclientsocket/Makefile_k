@@ -1,0 +1,22 @@
+
+CC = gcc
+
+LIBS =  -lsocket\
+	/home/courses/cse533/Stevens/unpv13e_solaris2.10/libunp.a
+
+FLAGS =  -g -O2
+#CFLAGS = ${FLAGS} -I/home/courses/cse533/Stevens/unpv13e_solaris2.10/lib
+CFLAGS = ${FLAGS} 
+
+all: get_ifi_info.o prifinfo.o
+	${CC} -o prifinfo prifinfo.o get_ifi_info.o ${LIBS}
+
+get_ifi_info.o: get_ifi_info.c
+	${CC} ${CFLAGS} -c get_ifi_info.c
+
+prifinfo.o: prifinfo.c
+	${CC} ${CFLAGS} -c prifinfo.c
+
+clean:
+	rm prifinfo prifinfo.o get_ifi_info.o
+
